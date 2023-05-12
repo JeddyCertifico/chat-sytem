@@ -52,6 +52,7 @@ $(document).ready(() => {
       <div class="media media-chat">
         <i class="pt-2 avatar fas fa-user"></i>
         <div class="media-body">
+          <h6 style="margin-top: -1.05rem; margin-bottom: -0.02rem; font-size: 10px"><b>${socket}</b></h6>
           <p>${msg}</p>
         </div>
       </div>
