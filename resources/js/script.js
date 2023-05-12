@@ -56,7 +56,7 @@ $(document).ready(() => {
         </div>
       </div>
     `);
-    } else if (mediaBodyLast.children().length >= 1 && !mediaContainer.children().last().hasClass("media-chat-reverse")) {
+    } else {
       mediaBodyLast.append(p);
     }
     prevSocketId = socket;
