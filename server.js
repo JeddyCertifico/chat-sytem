@@ -1,6 +1,7 @@
 var express = require("express");
 var app = express();
 
+// Set up io
 const http = require("http");
 const server = require("http").Server(app);
 const io = require("socket.io")(server);
@@ -38,11 +39,10 @@ function checkUserName(req, res, next) {
   }
 }
 
+// io
 io.on("connection", (socket) => {
   socket.on("send-message", (msg) => {
-    socket.broadcast.emit("send-message", msg);
-  });
-  socket.on("send-message", (msg) => {
+    socket.broadcast.emit("send-message", msg, socket.id);
     console.log(`Socket ${socket.id} says: ${msg}`);
   });
 });

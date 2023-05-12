@@ -1,6 +1,8 @@
-const socket = io.connect($("#url").text());
-
 $(document).ready(() => {
+  // connect to socket.io
+  const socket = io.connect($("#url").text());
+
+  // scroll to last message
   function scrollLastMsgIntoView() {
     var lastMsg = $(".media-body").last().children().last();
     if (lastMsg.length > 0) {
@@ -8,32 +10,57 @@ $(document).ready(() => {
     }
   }
 
+  // send message
   function sendMsg(event) {
     if (event) {
       event.preventDefault();
     }
+    const mediaContainer = $(".media-container");
     const msgInput = $("#msg");
     const msg = msgInput.val().trim();
     if (msg) {
       socket.emit("send-message", msg);
       const mediaBody = $(".media-body");
       const p = $("<p>").html(msg);
-      if (mediaBody.length > 0) {
+      if (!mediaContainer.children().last().hasClass("media-chat-reverse")) {
+        mediaContainer.append(`
+          <div class="media media-chat media-chat-reverse">
+            <div class="media-body">
+              <p>${msg}</p>
+            </div>
+          </div>  `);
+      } else {
         mediaBody.last().append(p);
-        scrollLastMsgIntoView();
-        msgInput.val("");
       }
+      scrollLastMsgIntoView();
+      msgInput.val("");
     }
   }
 
-  socket.on("send-message", (msg) => {
-    console.log(msg);
-    const mediaBody = $(".media-body");
+  // receive message
+  var prevSocketId = "";
+
+  socket.on("send-message", (msg, socket) => {
+    const mediaContainer = $(".media-container");
+    const mediaBodyLast = $(".media-body").last();
     const p = $("<p>").html(msg);
-    if (mediaBody.length > 0) {
-      mediaBody.last().append(p);
-      scrollLastMsgIntoView();
+    console.log(`Prev Socket: ${prevSocketId} `);
+    console.log(`Socket ${socket} `);
+
+    if (prevSocketId != socket) {
+      mediaContainer.append(`
+      <div class="media media-chat">
+        <i class="pt-2 avatar fas fa-user"></i>
+        <div class="media-body">
+          <p>${msg}</p>
+        </div>
+      </div>
+    `);
+    } else if (mediaBodyLast.children().length >= 1 && !mediaContainer.children().last().hasClass("media-chat-reverse")) {
+      mediaBodyLast.append(p);
     }
+    prevSocketId = socket;
+    scrollLastMsgIntoView();
   });
 
   $("#msg").focus();
@@ -54,12 +81,6 @@ $(document).ready(() => {
     if (event.key === "Enter") {
       sendMsg();
     }
-  });
-
-  // modal
-  $("#submit").click(() => {
-    const name = $("#name").val();
-    $(".modal-title").html(`Hello ${name}.`);
   });
 
   $("#name").focus();
