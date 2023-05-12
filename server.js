@@ -20,7 +20,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/chat", checkUserName, (req, res) => {
-  res.render("pages/index", { username: username });
+  res.render("pages/index", { username: username, url: url });
 });
 
 app.post("/chat", (req, res) => {

@@ -1,4 +1,6 @@
 $(document).ready(() => {
+  const socket = io.connect($("#url").text());
+
   function scrollLastMsgIntoView() {
     var lastMsg = $(".media-body").last().children().last();
     if (lastMsg.length > 0) {
