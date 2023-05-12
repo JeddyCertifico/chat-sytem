@@ -16,7 +16,7 @@ app.use("/resources", express.static("resources"));
 app.use("/views", express.static("views"));
 
 app.get("/", (req, res) => {
-  res.render("pages/welcome");
+  res.render("pages/index", { username: username, url: url });
 });
 
 app.get("/chat", checkUserName, (req, res) => {
@@ -37,6 +37,15 @@ function checkUserName(req, res, next) {
     res.redirect("/");
   }
 }
+
+io.on("connection", (socket) => {
+  socket.on("send-message", (msg) => {
+    socket.broadcast.emit("send-message", msg);
+  });
+  socket.on("send-message", (msg) => {
+    console.log(`Socket ${socket.id} says: ${msg}`);
+  });
+});
 
 server.listen(PORT);
 console.log("Server is listening on port 8000");

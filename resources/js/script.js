@@ -1,6 +1,6 @@
-$(document).ready(() => {
-  const socket = io.connect($("#url").text());
+const socket = io.connect($("#url").text());
 
+$(document).ready(() => {
   function scrollLastMsgIntoView() {
     var lastMsg = $(".media-body").last().children().last();
     if (lastMsg.length > 0) {
@@ -15,15 +15,26 @@ $(document).ready(() => {
     const msgInput = $("#msg");
     const msg = msgInput.val().trim();
     if (msg) {
+      socket.emit("send-message", msg);
       const mediaBody = $(".media-body");
       const p = $("<p>").html(msg);
       if (mediaBody.length > 0) {
         mediaBody.last().append(p);
-        msgInput.val("");
         scrollLastMsgIntoView();
+        msgInput.val("");
       }
     }
   }
+
+  socket.on("send-message", (msg) => {
+    console.log(msg);
+    const mediaBody = $(".media-body");
+    const p = $("<p>").html(msg);
+    if (mediaBody.length > 0) {
+      mediaBody.last().append(p);
+      scrollLastMsgIntoView();
+    }
+  });
 
   $("#msg").focus();
   scrollLastMsgIntoView();
