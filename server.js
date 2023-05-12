@@ -43,7 +43,15 @@ function checkUserName(req, res, next) {
 io.on("connection", (socket) => {
   socket.on("send-message", (msg) => {
     socket.broadcast.emit("send-message", msg, socket.id);
-    console.log(`Socket ${socket.id} says: ${msg}`);
+    // console.log(`Socket ${socket.id} says: ${msg}`);
+  });
+
+  socket.on("disconnect", () => {
+    // console.log(`Socket ${socket.id} disconnected.`);
+  });
+
+  socket.broadcast.emit("join", socket.id, () => {
+    console.log(`${socket.id} joined the chat`);
   });
 });
 

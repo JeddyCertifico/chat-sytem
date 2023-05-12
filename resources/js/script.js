@@ -2,6 +2,22 @@ $(document).ready(() => {
   // connect to socket.io
   const socket = io.connect($("#url").text());
 
+  // join chat
+  const mediaContainer = $(".media-container");
+  mediaContainer.append(`
+    <div class="text-center">
+      <h7 class="opacity-75">You joined the chat</h7>
+    </div>
+  `);
+
+  socket.on("join", (socket) => {
+    mediaContainer.append(`
+    <div class="text-center">
+      <h7 class="opacity-75">${socket} joined the chat</h7>
+    </div>
+  `);
+  });
+
   // scroll to last message
   function scrollLastMsgIntoView() {
     var lastMsg = $(".media-body").last().children().last();
@@ -15,7 +31,6 @@ $(document).ready(() => {
     if (event) {
       event.preventDefault();
     }
-    const mediaContainer = $(".media-container");
     const msgInput = $("#msg");
     const msg = msgInput.val().trim();
     if (msg) {
@@ -41,11 +56,8 @@ $(document).ready(() => {
   var prevSocketId = "";
 
   socket.on("send-message", (msg, socket) => {
-    const mediaContainer = $(".media-container");
     const mediaBodyLast = $(".media-body").last();
     const p = $("<p>").html(msg);
-    console.log(`Prev Socket: ${prevSocketId} `);
-    console.log(`Socket ${socket} `);
 
     if (prevSocketId != socket) {
       mediaContainer.append(`
