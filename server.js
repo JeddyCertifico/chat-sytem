@@ -45,11 +45,12 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("send-message", msg, socket.id, users[socket.id], () => {
       console.log(`${users[socket.id]} says: ${msg}`);
     });
-    // console.log(`Socket ${socket.id} says: ${msg}`);
   });
 
   socket.on("disconnect", () => {
-    // console.log(`Socket ${socket.id} disconnected.`);
+    socket.broadcast.emit("leave", users[socket.id]);
+    if (users[socket.id]) console.log(`${users[socket.id]} left the chat`);
+    delete users[socket.id];
   });
 
   socket.broadcast.emit("join", username, () => {

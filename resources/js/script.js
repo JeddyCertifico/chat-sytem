@@ -16,7 +16,17 @@ $(document).ready(() => {
         <div class="text-center">
           <h7 class="opacity-75">${user} joined the chat</h7>
         </div>
-  `);
+      `);
+  });
+
+  // left
+  socket.on("leave", (user) => {
+    if (user)
+      mediaContainer.append(`
+        <div class="text-center">
+          <h7 class="opacity-75">${user} left the chat</h7>
+        </div>
+      `);
   });
 
   // scroll to last message
