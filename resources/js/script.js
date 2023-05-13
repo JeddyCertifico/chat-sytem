@@ -10,11 +10,12 @@ $(document).ready(() => {
     </div>
   `);
 
-  socket.on("join", (socket) => {
-    mediaContainer.append(`
-    <div class="text-center">
-      <h7 class="opacity-75">${socket} joined the chat</h7>
-    </div>
+  socket.on("join", (user) => {
+    if (user)
+      mediaContainer.append(`
+        <div class="text-center">
+          <h7 class="opacity-75">${user} joined the chat</h7>
+        </div>
   `);
   });
 
@@ -55,7 +56,7 @@ $(document).ready(() => {
   // receive message
   var prevSocketId = "";
 
-  socket.on("send-message", (msg, socket) => {
+  socket.on("send-message", (msg, socket, user) => {
     const mediaBodyLast = $(".media-body").last();
     const p = $("<p>").html(msg);
 
@@ -64,7 +65,7 @@ $(document).ready(() => {
       <div class="media media-chat">
         <i class="pt-2 avatar fas fa-user"></i>
         <div class="media-body">
-          <h6 style="margin-top: -1.05rem; margin-bottom: -0.02rem; font-size: 10px"><b>${socket}</b></h6>
+          <h6 style="margin-top: -1.05rem; margin-bottom: -0.02rem; font-size: 10px"><b>${user}</b></h6>
           <p>${msg}</p>
         </div>
       </div>
