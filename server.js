@@ -1,6 +1,7 @@
 var express = require("express");
 var app = express();
 
+// Set up io
 const http = require("http");
 const server = require("http").Server(app);
 const io = require("socket.io")(server);
@@ -16,11 +17,11 @@ app.use("/resources", express.static("resources"));
 app.use("/views", express.static("views"));
 
 app.get("/", (req, res) => {
-  res.render("pages/welcome");
+  res.render("pages/index", { username: username, url: url });
 });
 
 app.get("/chat", checkUserName, (req, res) => {
-  res.render("pages/index", { username: username });
+  res.render("pages/index", { username: username, url: url });
 });
 
 app.post("/chat", (req, res) => {
@@ -37,6 +38,22 @@ function checkUserName(req, res, next) {
     res.redirect("/");
   }
 }
+
+// io
+io.on("connection", (socket) => {
+  socket.on("send-message", (msg) => {
+    socket.broadcast.emit("send-message", msg, socket.id);
+    // console.log(`Socket ${socket.id} says: ${msg}`);
+  });
+
+  socket.on("disconnect", () => {
+    // console.log(`Socket ${socket.id} disconnected.`);
+  });
+
+  socket.broadcast.emit("join", socket.id, () => {
+    console.log(`${socket.id} joined the chat`);
+  });
+});
 
 server.listen(PORT);
 console.log("Server is listening on port 8000");
