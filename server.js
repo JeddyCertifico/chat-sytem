@@ -39,20 +39,23 @@ function checkUserName(req, res, next) {
   }
 }
 
-// io
+// io connection
 io.on("connection", (socket) => {
+  // sending message
   socket.on("send-message", (msg) => {
     socket.broadcast.emit("send-message", msg, socket.id, users[socket.id], () => {
       console.log(`${users[socket.id]} says: ${msg}`);
     });
   });
 
+  // disconnecting
   socket.on("disconnect", () => {
     socket.broadcast.emit("leave", users[socket.id]);
     if (users[socket.id]) console.log(`${users[socket.id]} left the chat`);
     delete users[socket.id];
   });
 
+  // joining
   socket.broadcast.emit("join", username, () => {
     users[socket.id] = username;
     username = "";
