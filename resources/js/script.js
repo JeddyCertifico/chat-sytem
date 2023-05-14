@@ -37,6 +37,9 @@ $(document).ready(() => {
     }
   }
 
+  //reset prevSocketId
+  var prevSocketId = "";
+
   // send message
   function sendMsg(event) {
     if (event) {
@@ -58,20 +61,21 @@ $(document).ready(() => {
       } else {
         mediaBody.last().append(p);
       }
+      prevSocketId = "";
       scrollLastMsgIntoView();
       msgInput.val("");
     }
   }
 
   // receive message
-  var prevSocketId = "";
-
   socket.on("send-message", (msg, socket, user) => {
     const mediaBodyLast = $(".media-body").last();
     const p = $("<p>").html(msg);
+    // console.log(`socket: ${socket}`);
+    // console.log(`prevSocketId: ${prevSocketId}`);
 
     if (prevSocketId != socket) {
-      mediaContainer.append(`
+      mediaContainer.append(` 
       <div class="media media-chat">
         <i class="pt-2 avatar fas fa-user"></i>
         <div class="media-body">
