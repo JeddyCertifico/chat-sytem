@@ -6,7 +6,7 @@ const http = require("http");
 const server = require("http").Server(app);
 const io = require("socket.io")(server);
 const PORT = process.env.PORT || 8000;
-const url = "https://voting-app-grp-1.onrender.com";
+const url = "https://chat-app-9ke7.onrender.com";
 
 var username = "";
 var users = {};
