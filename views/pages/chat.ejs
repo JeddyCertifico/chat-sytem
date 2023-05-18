@@ -2,6 +2,10 @@
 <html lang="en">
   <head>
     <%- include('../partials/head') %>
+    <script>
+      const roomName = "<%= roomName %>";
+    </script>
+    <script src="resources/js/script.js"></script>
   </head>
   <body>
     <div class="d-none" id="url"><% url %></div>
@@ -9,7 +13,7 @@
       <div class="col-sm-12">
         <div class="card card-bordered border-0">
           <div class="card-header fixed-top bg-white border-bottom-1 shadow-sm">
-            <h4 class="card-title fw-bold pt-2">Group Chat</h4>
+            <h4 class="card-title fw-bold pt-2 text-capitalize"><%= roomName %></h4>
           </div>
           <div class="media-container ps-container ps-theme-default ps-active-y mb-5" style="margin-top: 5em" id="chat-content"></div>
         </div>

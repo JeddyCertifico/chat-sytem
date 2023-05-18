@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head') %>
+    <script src="resources/js/room.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row justify-content-center gap-4 pt-3">
+        <% Object.keys(rooms).forEach(room => { %>
+        <div class="card col-sm-3 text-center p-5 bg-dark d-grid" style="place-items: center">
+          <div class="card-body">
+            <h2 class="text-white fw-bold"><%= room %></h2>
+            <button class="btn btn-danger"><a class="text-white text-decoration-none fw-bold" href="/<%= room %>">Join</a></button>
+          </div>
+        </div>
+        <% }) %>
+
+        <div class="card col-sm-3 bg-dark text-center p-5">
+          <div class="card-body">
+            <form action="/room" method="post">
+              <input class="form-control" type="text" name="room" placeholder="New Group" />
+              <button class="btn btn-danger fw-bold m-3" type="submit">Create</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

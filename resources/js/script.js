@@ -4,19 +4,23 @@ $(document).ready(() => {
 
   // join chat
   const mediaContainer = $(".media-container");
+
   mediaContainer.append(`
     <div class="text-center">
       <h7 class="opacity-75">You joined the chat</h7>
     </div>
   `);
 
+  socket.emit("join", roomName);
+
   socket.on("join", (user) => {
-    if (user)
+    if (user) {
       mediaContainer.append(`
         <div class="text-center">
           <h7 class="opacity-75">${user} joined the chat</h7>
         </div>
       `);
+    }
   });
 
   // left
@@ -48,7 +52,7 @@ $(document).ready(() => {
     const msgInput = $("#msg");
     const msg = msgInput.val().trim();
     if (msg) {
-      socket.emit("send-message", msg);
+      socket.emit("send-message", roomName, msg);
       const mediaBody = $(".media-body");
       const p = $("<p>").html(msg);
       if (!mediaContainer.children().last().hasClass("media-chat-reverse")) {
