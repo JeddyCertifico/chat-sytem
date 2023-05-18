@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 8000;
 const url = "https://chat-app-9ke7.onrender.com";
 
 var username = "";
-var users = {};
+const rooms = { SampleRoom: { users: {} } };
 
 // app.use(express.json());
 app.set("view engine", "ejs");
@@ -22,13 +22,30 @@ app.get("/", (req, res) => {
   res.render("pages/welcome", { url: url });
 });
 
-app.get("/chat", checkUserName, (req, res) => {
-  res.render("pages/index", { url: url });
+app.get("/room", checkUserName, (req, res) => {
+  res.render("pages/room", { rooms: rooms });
 });
 
 app.post("/welcome", (req, res) => {
   username = req.body.name;
-  res.redirect("/chat");
+  res.redirect("/room");
+});
+
+app.post("/room", (req, res) => {
+  if (rooms[req.body.room] != null) {
+    return res.redirect("room");
+  }
+  rooms[req.body.room] = { users: {} };
+  res.redirect(req.body.room);
+  // Send message that new room was created
+  io.emit("room-created", req.body.room);
+});
+
+app.get("/:room", checkUserName, (req, res) => {
+  if (rooms[req.params.room] == null) {
+    return res.redirect("room");
+  }
+  res.render("pages/chat", { roomName: req.params.room, url: url });
 });
 
 function checkUserName(req, res, next) {
@@ -41,27 +58,39 @@ function checkUserName(req, res, next) {
 
 // io connection
 io.on("connection", (socket) => {
+  // joining
+  socket.on("join", (room) => {
+    socket.join(room);
+    rooms[room].users[socket.id] = username;
+    socket.broadcast.to(room).emit("join", username, () => {
+      username = "";
+      if (rooms[room].users[socket.id]) console.log(`${rooms[room].users[socket.id]} joined the chat`);
+    });
+  });
+
   // sending message
-  socket.on("send-message", (msg) => {
-    socket.broadcast.emit("send-message", msg, socket.id, users[socket.id], () => {
-      console.log(`${users[socket.id]} says: ${msg}`);
+  socket.on("send-message", (room, msg) => {
+    socket.broadcast.to(room).emit("send-message", msg, socket.id, rooms[room].users[socket.id], () => {
+      console.log(`${rooms[room].users[socket.id]} says: ${msg}`);
     });
   });
 
   // disconnecting
   socket.on("disconnect", () => {
-    socket.broadcast.emit("leave", users[socket.id]);
-    if (users[socket.id]) console.log(`${users[socket.id]} left the chat`);
-    delete users[socket.id];
-  });
-
-  // joining
-  socket.broadcast.emit("join", username, () => {
-    users[socket.id] = username;
-    username = "";
-    if (users[socket.id]) console.log(`${users[socket.id]} joined the chat`);
+    getUserRooms(socket).forEach((room) => {
+      socket.broadcast.to(room).emit("leave", rooms[room].users[socket.id]);
+      if (rooms[room].users[socket.id]) console.log(`${rooms[room].users[socket.id]} left the chat in ${rooms[room]}}`);
+      delete rooms[room].users[socket.id];
+    });
   });
 });
+
+function getUserRooms(socket) {
+  return Object.entries(rooms).reduce((names, [name, room]) => {
+    if (room.users[socket.id] != null) names.push(name);
+    return names;
+  }, []);
+}
 
 server.listen(PORT);
 console.log("Server is listening on port 8000");

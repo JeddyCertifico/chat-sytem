@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head') %>
+    <script src="resources/js/room.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row justify-content-center gap-3">
+        <% Object.keys(rooms).forEach(room => { %>
+        <div class="col-sm-3 border border-danger text-center p-5">
+          <h2><%= room %></h2>
+          <button><a href="/<%= room %>">Join</a></button>
+        </div>
+        <% }) %>
+        <div class="col-sm-3 border border-danger text-center p-5">
+          <form action="/room" method="post">
+            <input type="text" name="room" />
+            <button type="submit">Join</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

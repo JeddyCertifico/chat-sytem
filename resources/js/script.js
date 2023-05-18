@@ -10,6 +10,8 @@ $(document).ready(() => {
     </div>
   `);
 
+  socket.emit("join", roomName);
+
   socket.on("join", (user) => {
     if (user)
       mediaContainer.append(`
@@ -48,7 +50,7 @@ $(document).ready(() => {
     const msgInput = $("#msg");
     const msg = msgInput.val().trim();
     if (msg) {
-      socket.emit("send-message", msg);
+      socket.emit("send-message", roomName, msg);
       const mediaBody = $(".media-body");
       const p = $("<p>").html(msg);
       if (!mediaContainer.children().last().hasClass("media-chat-reverse")) {
