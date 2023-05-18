@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 8000;
 const url = "https://chat-app-9ke7.onrender.com";
 
 var username = "";
-const rooms = { SampleRoom: { users: {} } };
+const rooms = { Main: { users: {} } };
 
 // app.use(express.json());
 app.set("view engine", "ejs");
@@ -32,7 +32,7 @@ app.post("/welcome", (req, res) => {
 });
 
 app.post("/room", (req, res) => {
-  if (rooms[req.body.room] != null) {
+  if (!req.body.room || rooms[req.body.room] != null) {
     return res.redirect("room");
   }
   rooms[req.body.room] = { users: {} };
@@ -64,7 +64,7 @@ io.on("connection", (socket) => {
     rooms[room].users[socket.id] = username;
     socket.broadcast.to(room).emit("join", username, () => {
       username = "";
-      if (rooms[room].users[socket.id]) console.log(`${rooms[room].users[socket.id]} joined the chat`);
+      if (rooms[room].users[socket.id]) console.log(`${rooms[room].users[socket.id]} joined the chat in ${room}`);
     });
   });
 
@@ -79,7 +79,7 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     getUserRooms(socket).forEach((room) => {
       socket.broadcast.to(room).emit("leave", rooms[room].users[socket.id]);
-      if (rooms[room].users[socket.id]) console.log(`${rooms[room].users[socket.id]} left the chat in ${rooms[room]}}`);
+      if (rooms[room].users[socket.id]) console.log(`${rooms[room].users[socket.id]} left the chat in ${room}}`);
       delete rooms[room].users[socket.id];
     });
   });

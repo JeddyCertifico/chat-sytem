@@ -4,6 +4,7 @@ $(document).ready(() => {
 
   // join chat
   const mediaContainer = $(".media-container");
+
   mediaContainer.append(`
     <div class="text-center">
       <h7 class="opacity-75">You joined the chat</h7>
@@ -13,12 +14,13 @@ $(document).ready(() => {
   socket.emit("join", roomName);
 
   socket.on("join", (user) => {
-    if (user)
+    if (user) {
       mediaContainer.append(`
         <div class="text-center">
           <h7 class="opacity-75">${user} joined the chat</h7>
         </div>
       `);
+    }
   });
 
   // left
