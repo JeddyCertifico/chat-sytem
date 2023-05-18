@@ -1,6 +1,13 @@
 var express = require("express");
 var app = express();
 
+app.use((req, res, next) => {
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, private");
+  res.setHeader("Expires", "0");
+  res.setHeader("Pragma", "no-cache");
+  next();
+});
+
 // Set up io
 const http = require("http");
 const server = require("http").Server(app);
