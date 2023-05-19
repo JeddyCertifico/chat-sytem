@@ -2,7 +2,9 @@
 <html lang="en">
   <head>
     <%- include('../partials/head') %>
-    <script src="resources/js/room.js"></script>
+    <script>
+      const name = "<%= name %>";
+    </script>
   </head>
   <body>
     <div class="container">
@@ -27,4 +29,11 @@
       </div>
     </div>
   </body>
+  <script>
+    $(document).ready(() => {
+      const socket = io();
+
+      socket.emit("enter-room", name);
+    });
+  </script>
 </html>
